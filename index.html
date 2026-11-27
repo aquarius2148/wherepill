@@ -29,7 +29,6 @@
 @keyframes pantry-fall{0%{transform:translate(0,0) rotate(0)}30%{transform:translate(10%,40%) rotate(24deg)}100%{transform:translate(45%,245%) rotate(100deg)}}
 .pantry-art .brush-item.fallen{left:9%;top:83%;width:54%;height:16%;transform:none;animation:none;z-index:3}
  .pantry-art .paste-item{position:absolute;left:75%;top:43%;width:20%;height:9%;object-fit:contain;pointer-events:none;z-index:2}
-.pantry-reset{display:block;margin:0 auto 10px}.pantry-reset[hidden]{display:none}
 @media(prefers-reduced-motion:reduce){.pantry-art .brush-item.falling{animation-duration:.01ms}}
 
 #wpBusy{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:99999;background:#18314d;color:#fff;border-radius:12px;padding:13px 19px;box-shadow:0 3px 12px #0004;font-size:14px;max-width:90vw;text-align:center}#wpBusy[hidden]{display:none!important}
@@ -111,17 +110,15 @@ function activateDemo(){demoMode=true;rows=DEMO_ROWS.map(([insurance,drug,loc],i
 function makePantry(){
  const section=el('section','shelf'),art=el('div','pantry-art');art.style.position='relative';
  const sink=el('img','sink');sink.src='tb01.png';sink.alt='사무실 탕비실 싱크대';sink.loading='lazy';art.append(sink);
- const reset=el('button','mini pantry-reset','탕비실 원상복구');reset.type='button';reset.hidden=true;
  const makeItem=(cls,src,alt,label)=>{const button=el('button','pantry-item '+cls),img=el('img');button.type='button';button.setAttribute('aria-label',label);img.src=src;img.alt=alt;button.append(img);art.append(button);return {button,img};};
  const brush=makeItem('brush-item','tb02.png','오래된 칫솔 다섯 개가 꽂힌 컵','칫솔컵 건드리기');
  const paste=el('img','paste-item');paste.src='tb03.png';paste.alt='치올 치약';art.append(paste);
  let brushState='upright',fallTimer=0;
  for(const src of ['tb02-fallen.png']){const pre=new Image();pre.src=src;}
  const finishFall=()=>{if(brushState!=='falling')return;clearTimeout(fallTimer);brushState='fallen';brush.img.src='tb02-fallen.png';brush.img.alt='바닥에 쓰러진 컵과 흩어진 칫솔 다섯 개';brush.button.classList.remove('falling');brush.button.classList.add('fallen');brush.button.setAttribute('aria-label','바닥에 떨어진 칫솔');};
- const fall=()=>{if(brushState!=='upright')return;brushState='falling';reset.hidden=false;brush.button.classList.add('falling');fallTimer=setTimeout(finishFall,750);};
+ const fall=()=>{if(brushState!=='upright')return;brushState='falling';brush.button.classList.add('falling');fallTimer=setTimeout(finishFall,750);};
  brush.button.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')fall();});brush.button.addEventListener('click',fall);brush.button.addEventListener('animationend',finishFall);
- reset.onclick=()=>{clearTimeout(fallTimer);brushState='upright';brush.button.classList.remove('falling','fallen');brush.button.setAttribute('aria-label','칫솔컵 건드리기');brush.img.src='tb02.png';brush.img.alt='오래된 칫솔 다섯 개가 꽂힌 컵';reset.hidden=true;};
- section.append(art,el('div','shelf-label','탕비실'),reset);return section;
+ section.append(art,el('div','shelf-label','탕비실'));return section;
 }
 /* 약국별 로컬 저장소. 기존 약품 UI는 그대로 사용한다. */
 const INDEX_KEY='pharmacy-index-v2',LEGACY_PRACTICE='wherepill-practice-v1';
